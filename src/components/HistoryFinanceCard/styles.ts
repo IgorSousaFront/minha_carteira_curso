@@ -15,7 +15,7 @@ export const Card = styled.li`
   margin-bottom: 15px;
   list-style: none;
   cursor: pointer;
-  transition: transform .3s;
+  transition: transform .1s;
 
   &:hover {
     opacity: .7;
