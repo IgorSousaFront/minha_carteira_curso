@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 
 import SelectInput from '../../components/SelectInput';
 import HistoryFinanceCard from '../../components/HistoryFinanceCard';
@@ -6,9 +6,22 @@ import HistoryFinanceCard from '../../components/HistoryFinanceCard';
 import { Container, Content, Filters } from './styles';
 import ContentHeader from '../../components/ContentHeader';
 
+import gains from '../../repositories/gains';
+import expenses from '../../repositories/expenses';
+
 import { useParams } from "react-router-dom";
 
+interface IData {
+  description: string;
+  amountFormatted: string;
+  frequency: string;
+  dateFormatted: string;
+  tagColor: string;
+}
+
 const List: React.FC = () => {
+  const [data, setData] = useState<IData[]>([]);
+
   let { type } = useParams();
 
   const pageContent = useMemo(() => {
@@ -28,7 +41,11 @@ const List: React.FC = () => {
         lineColor: '#4E41F0'
       }
     }
-  }, [type])
+  }, [type]);
+
+  const listData = useMemo(() => {
+    return type === 'entry-balance' ? gains : expenses;
+  }, [type]);
 
   const months = [
     {value: 12, label: 'Dezembro'},
@@ -44,21 +61,18 @@ const List: React.FC = () => {
     {value: 2018, label: 2018},
   ];
 
-  let cardList = []
-
-  for(let i = 0; i <= 33; i++) {
-    let isRed = Math.floor(Math.random() * 2)
-
-    cardList.push(
-      <HistoryFinanceCard
-        key={i}
-        tagColor={isRed ? '#E44C4E' : '#4E41F0'}
-        title="Conta de luz"
-        subtitle="27/07/2020"
-        amount="R$120,00"
-      />
-    )
-  }
+  useEffect(() => {
+    const response = listData.map(item => {
+      return {
+        description: item.description,
+        amountFormatted: item.amount,
+        frequency: item.frequency,
+        dateFormatted: item.date,
+        tagColor: item.frequency === 'recorrente' ? '#4E41F0' : '#E44C4E',
+      }
+    })
+    setData(response)
+  }, [type]);
 
   return (
     <Container>
@@ -71,22 +85,24 @@ const List: React.FC = () => {
       </ContentHeader>
 
       <Filters>
-        <button
-          type="button"
-          className="tag-filter tag-filter-recurrent"
-        >
+        <button type="button" className="tag-filter tag-filter-recurrent">
           Recorrentes
         </button>
-        <button
-          type="button"
-          className="tag-filter tag-filter-eventual"
-        >
+        <button type="button" className="tag-filter tag-filter-eventual">
           Eventuais
         </button>
       </Filters>
 
       <Content>
-        {cardList}
+        {data.map((item, key) => (
+          <HistoryFinanceCard
+            key={key}
+            tagColor={item.tagColor}
+            title={item.description}
+            subtitle={item.dateFormatted}
+            amount={item.amountFormatted}
+          />
+        ))}
       </Content>
     </Container>
   );
