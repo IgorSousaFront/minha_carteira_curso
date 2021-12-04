@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import SelectInput from '../../components/SelectInput';
 import HistoryFinanceCard from '../../components/HistoryFinanceCard';
@@ -6,7 +6,30 @@ import HistoryFinanceCard from '../../components/HistoryFinanceCard';
 import { Container, Content, Filters } from './styles';
 import ContentHeader from '../../components/ContentHeader';
 
+import { useParams } from "react-router-dom";
+
 const List: React.FC = () => {
+  let { type } = useParams();
+
+  const pageContent = useMemo(() => {
+    if(type === 'entry-balance') {
+      return {
+        title: 'Entradas',
+        lineColor: '#F7931B'
+      }
+    } else if (type === 'exit-balance') {
+      return {
+        title: 'Saídas',
+        lineColor: '#E44C4E'
+      }
+    } else {
+      return {
+        title: 'Lista',
+        lineColor: '#4E41F0'
+      }
+    }
+  }, [type])
+
   const months = [
     {value: 12, label: 'Dezembro'},
     {value: 1, label: 'Janeiro'},
@@ -28,6 +51,7 @@ const List: React.FC = () => {
 
     cardList.push(
       <HistoryFinanceCard
+        key={i}
         tagColor={isRed ? '#E44C4E' : '#4E41F0'}
         title="Conta de luz"
         subtitle="27/07/2020"
@@ -39,8 +63,8 @@ const List: React.FC = () => {
   return (
     <Container>
       <ContentHeader
-        title="Entradas"
-        lineColor="#E44C4E"
+        title={pageContent.title}
+        lineColor={pageContent.lineColor}
       >
         <SelectInput options={months}/>
         <SelectInput options={years}/>
