@@ -6,6 +6,9 @@ import HistoryFinanceCard from '../../components/HistoryFinanceCard';
 import { Container, Content, Filters } from './styles';
 import ContentHeader from '../../components/ContentHeader';
 
+import formatCurrency from '../../utils/formatCurrency';
+import formatDate from '../../utils/formateDate';
+
 import gains from '../../repositories/gains';
 import expenses from '../../repositories/expenses';
 
@@ -65,9 +68,9 @@ const List: React.FC = () => {
     const response = listData.map(item => {
       return {
         description: item.description,
-        amountFormatted: item.amount,
+        amountFormatted: formatCurrency(Number(item.amount)),
         frequency: item.frequency,
-        dateFormatted: item.date,
+        dateFormatted: formatDate(item.date),
         tagColor: item.frequency === 'recorrente' ? '#4E41F0' : '#E44C4E',
       }
     })
