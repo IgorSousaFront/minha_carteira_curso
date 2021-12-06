@@ -4,12 +4,12 @@ import GlobalStyles from './styles/GlobalStyles';
 
 import AppRoutes from './routes';
 
-import dark from './styles/themes/dark';
-import light from './styles/themes/light';
+import darkTheme from './styles/themes/dark';
+// import light from './styles/themes/light';
 
 const App: React.FC = () => {
   return (
-    <ThemeProvider theme={dark}>
+    <ThemeProvider theme={darkTheme}>
       <GlobalStyles  />
       <AppRoutes />
     </ThemeProvider>

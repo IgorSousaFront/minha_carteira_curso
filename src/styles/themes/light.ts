@@ -1,4 +1,4 @@
-export default {
+const lightTheme = {
   title: 'light',
   
   colors: {
@@ -14,4 +14,6 @@ export default {
     info: '#3B5998',
     warning: '#FF6961',
   },
-}
+};
+
+export default lightTheme;
