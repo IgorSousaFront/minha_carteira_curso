@@ -15,7 +15,8 @@ export const Filters = styled.div`
     font-weight: 500;
     color: ${props => props.theme.colors.white};
     margin: 0 20px;
-    transition: opacity .3s;
+    transition: opacity .1s;
+    opacity: .4;
 
     &:hover {
       opacity: .7;
@@ -24,17 +25,25 @@ export const Filters = styled.div`
     &::after {
       content: '';
       display : block;
-      width: 50px;
+      width: 45px;
       margin: 8px auto 0;
       border-bottom: 10px solid;
     }
 
     &-recurrent::after {
+      border-color: ${props => props.theme.colors.success};
+    }
+    
+    &-eventual::after {
       border-color: ${props => props.theme.colors.warning};
     }
+    
+    &-all::after {
+      border-color: ${props => props.theme.colors.info};
+    }
 
-    &-eventual::after {
-      border-color: ${props => props.theme.colors.success};
+    &.tag-active {
+      opacity: 1;
     }
   }
 `
