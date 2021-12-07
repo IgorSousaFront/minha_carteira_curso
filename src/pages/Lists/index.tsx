@@ -1,20 +1,25 @@
+// Funtional imports
 import React, { useMemo, useState, useEffect } from 'react';
+import { useParams } from "react-router-dom";
 
+// Components imports
 import SelectInput from '../../components/SelectInput';
 import HistoryFinanceCard from '../../components/HistoryFinanceCard';
-
-import { Container, Content, Filters } from './styles';
 import ContentHeader from '../../components/ContentHeader';
 
+// Styles imports
+import { Container, Content, Filters } from './styles';
+
+// Utils imports
 import formatCurrency from '../../utils/formatCurrency';
 import formatDate from '../../utils/formateDate';
 
+// Data imports
 import gains from '../../repositories/gains';
 import expenses from '../../repositories/expenses';
 import listOfMonths from '../../repositories/months';
 
-import { useParams } from "react-router-dom";
-
+// Interfaces
 interface IData {
   description: string;
   amountFormatted: string;
@@ -32,32 +37,23 @@ const List: React.FC = () => {
   let { type } = useParams();
 
   const pageContent = useMemo(() => {
-    if(type === 'entry-balance') {
-      return {
-        title: 'Entradas',
-        lineColor: '#F7931B'
-      }
-    } else if (type === 'exit-balance') {
-      return {
-        title: 'Saídas',
-        lineColor: '#E44C4E'
-      }
-    } else {
-      return {
-        title: 'Lista',
-        lineColor: '#4E41F0'
-      }
+    return type === 'entry-balance' ? {
+      title: 'Entradas',
+      lineColor: '#F7931B',
+      data: gains
+    } : {
+      title: 'Saídas',
+      lineColor: '#E44C4E',
+      data: expenses
     }
-  }, [type]);
-
-  const listData = useMemo(() => {
-    return type === 'entry-balance' ? gains : expenses;
   }, [type]);
 
   const years = useMemo(() => {
     let uniqueYears: number[] = [];
 
-    listData.forEach(item => {
+    const { data } = pageContent
+
+    data.forEach(item => {
       const date = new Date(item.date);
       const year = date.getFullYear();
 
@@ -72,7 +68,7 @@ const List: React.FC = () => {
         label: year
       }
     });
-  }, [listData]);
+  }, [pageContent]);
 
   const months = useMemo(() => {
     return listOfMonths.map((month, index) => {
@@ -84,15 +80,11 @@ const List: React.FC = () => {
   }, []);
 
   const handleFrequencyClick = (frequency: string) => {
-    if(frequency !== 'todos') {
-      setSelectedFrequency([frequency])
-    } else {
-      setSelectedFrequency(['recorrente', 'eventual', 'todos']);
-    }
+    frequency !== 'todos' ? setSelectedFrequency([frequency]) : setSelectedFrequency(['recorrente', 'eventual', 'todos']);
   }
 
   useEffect(() => {
-    const filteredDate = listData.filter(item => {
+    const filteredDate = pageContent.data.filter(item => {
       const date = new Date(item.date);
       const month = String(date.getMonth() + 1);
       const year = String(date.getFullYear());
@@ -111,7 +103,7 @@ const List: React.FC = () => {
     })
 
     setData(formattedDate)
-  }, [listData, monthSelected, yearSelected, selectedFrequency]);
+  }, [pageContent, monthSelected, yearSelected, selectedFrequency]);
 
   return (
     <Container>
